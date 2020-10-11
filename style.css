@@ -1,0 +1,15 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  display: flex;
+}
+body > div { flex: 1; }
+
+.col-6 {
+  height: 500px;
+  width: 1000px;
+  background-color: #ddd;
+}
