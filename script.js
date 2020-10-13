@@ -7,7 +7,11 @@ var getToDos = function () {
       console.log(response);
       var tsk = response.tasks;
       tsk.forEach(function (task) {
-        $('tbody').append('<tr>' + '<td class = "toDo">' + task.content + '</td>' + '<td><button class="btn btn-sm complete">Mark Complete</button></td>' + '<td><button class="btn btn-sm remove" data-id="' + task.id + '">remove</button></td>' + '</tr>');
+        if (task.completed === true) {
+          $('tbody').append('<tr>' + '<td class = "toDo">' + task.content + '</td>' + '<td><button class="btn btn-sm markComplete" data-id="' + task.id + '">Complete</button></td>' + '<td><button class="btn btn-sm markActive" data-id="' + task.id + '">Mark Active</button></td>' + '<td class = "isComplete green">' + 'Completed' + '</td>' + '<td><button class="btn btn-sm remove" data-id="' + task.id + '">remove</button></td>' + '</tr>');
+        } else if (task.completed === false) {
+          $('tbody').append('<tr>' + '<td class = "toDo">' + task.content + '</td>' + '<td><button class="btn btn-sm markComplete" data-id="' + task.id + '">Complete</button></td>' + '<td><button class="btn btn-sm markActive" data-id="' + task.id + '">Mark Active</button></td>' + '<td class = "isComplete red">' + 'Active' + '</td>' + '<td><button class="btn btn-sm remove" data-id="' + task.id + '">remove</button></td>' + '</tr>');
+        }
       });
     },
 
@@ -32,10 +36,9 @@ var addToDo = function () {
     }),
     success: function (response, textStatus) {
       console.log(response);
+      $('input').val('');
       $('tbody').empty();
       getToDos();
-      /*var responseContent = response.task.content;
-      $('tbody').append('<tr>' + '<td class = "toDo">' + responseContent + '</td>' + '<td><button class="btn btn-sm complete">Mark Complete</button></td>' + '<td><button class="btn btn-sm remove">remove</button></td>' + '</tr>');*/
     },
 
     error: function (request, textStatus, errorMessage) {
@@ -44,13 +47,14 @@ var addToDo = function () {
   });
 };
 
-
 var removeToDo = function (id) {
   $.ajax({
     type: 'DELETE',
     url: 'https://altcademy-to-do-list-api.herokuapp.com/tasks/' + id + '?api_key=207',
     success: function (response, textStatus) {
       console.log(response);
+      $('tbody').empty();
+      getToDos();
     },
 
     error: function (request, textStatus, errorMessage) {
@@ -61,16 +65,48 @@ var removeToDo = function (id) {
 
 $(document).on('click', '.btn.remove', function () {
   removeToDo($(this).data('id'));
-  $(this).closest('tr').remove();
-  getToDos();
 });
 
+var makeComplete = function (id) {
+  $.ajax({
+    type: 'PUT',
+    url: 'https://altcademy-to-do-list-api.herokuapp.com/tasks/' + id + '/mark_complete?api_key=207',
+    contentType: 'application/json',
+    dataType: 'json',
+    success: function (response, textStatus) {
+      console.log(response);
+      $('tbody').empty();
+      getToDos();
+    },
 
+    error: function (request, textStatus, errorMessage) {
+      console.log(errorMessage);
+    },
+  });
+};
 
+$(document).on('click', '.btn.markComplete', function () {
+  makeComplete($(this).data('id'));
+});
 
-/*  $('tbody').append('<tr>' + '<td class = "toDo">' + name + '</td>' +
-    '<td class = "price">' + price + '</td>' +
-    '<td class="quantity"><input type="number" value="' + quantity + '" /></td>' +
-    '<td class = "subtotal">' +
-    '<td><button class="btn btn-light btn-sm remove">remove</button></td>' +
-    '</tr>'); */
+var makeActive = function (id) {
+  $.ajax({
+    type: 'PUT',
+    url: 'https://altcademy-to-do-list-api.herokuapp.com/tasks/' + id + '/mark_active?api_key=207',
+    contentType: 'application/json',
+    dataType: 'json',
+    success: function (response, textStatus) {
+      console.log(response);
+      $('tbody').empty();
+      getToDos();
+    },
+
+    error: function (request, textStatus, errorMessage) {
+      console.log(errorMessage);
+    },
+  });
+};
+
+$(document).on('click', '.btn.markActive', function () {
+  makeActive($(this).data('id'));
+});

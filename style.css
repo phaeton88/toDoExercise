@@ -10,7 +10,15 @@ body > div { flex: 1; }
 
 .col-6 {
   height: 500px;
-  width: 1000px;
+  width: 1500px;
   background-color: #ddd;
   overflow-y: scroll;
+}
+
+.green {
+  color: green;
+}
+
+.red {
+  color: red;
 }
